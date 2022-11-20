@@ -34,3 +34,6 @@ class sim800LSMS():
         #print(a)
         print(phNum)
         print(self.rcv)
+
+       
+
