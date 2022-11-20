@@ -1,0 +1,36 @@
+import serial
+import os, time
+import datetime
+import RPi.GPIO as GPIO
+import lcd_i2c as lcd
+
+GPIO.setmode(GPIO.BOARD)
+
+class sim800LSMS():
+    def __init__(self):
+        pass
+       
+    def sendSMS(self, phNum):
+        self.port = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=1)
+        self.port.write(b'AT\r')
+        self.rcv = self.port.read(10)
+        time.sleep(1)
+        self.port.write(b"AT+CMGF=1\r")
+        lcd.displayText2("sms mode")
+        time.sleep(3)
+        current_time = datetime.datetime.now()
+        #self.port.write(b'AT+CMGS="08524064097"\r')
+        #f'AT+CMGS="{phNum}"\r'.encode()
+        #self.port.write(b'AT+CMGS="08524064097"\r')
+        self.port.write(f'AT+CMGS="{phNum}"\r'.encode())
+        msg = (f"Student boarded the bus at:{current_time}.")
+        lcd.displayText2("sending message…")
+        time.sleep(3)
+        self.port.reset_output_buffer()
+        time.sleep(1)
+        self.port.write(str.encode(msg+chr(26)))
+        time.sleep(3)
+        #a = self.port.write(f'AT+CIPGSMLOC="{phNum}"1,1\r'.encode())
+        #print(a)
+        print(phNum)
+        print(self.rcv)
